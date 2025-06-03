@@ -7,9 +7,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app, origins=["https://deboaacao.vercel.app"])
 
-client = OpenAI(api_key=os.getenv("key"))
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-key = os.getenv("key") #colocado no render
+key = os.getenv("key") #colocado na var-ambiente no render
 
 @app.route('/chat', methods=['POST'])
 def chat():
