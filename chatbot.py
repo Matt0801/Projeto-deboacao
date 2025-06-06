@@ -21,7 +21,7 @@ def chat():
     ]
 
     if origin not in origens_permitidas:
-    abort(403)
+        abort(403)
         
     token = request.headers.get('Authorization')
 
