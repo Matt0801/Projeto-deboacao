@@ -14,8 +14,14 @@ key = os.getenv("key") #colocado na var-ambiente no render
 @app.route('/chat', methods=['POST'])
 def chat():
     origin = request.headers.get('Origin')
-    if origin != "https://deboaacao.vercel.app":
-        abort(403)
+    origens_permitidas = [
+    "https://deboaacao.vercel.app",
+    "https://deboaacao.vercel.app/",  
+    None  # chamadas feitas do server-side
+    ]
+
+    if origin not in origens_permitidas:
+    abort(403)
         
     token = request.headers.get('Authorization')
 
