@@ -29,7 +29,7 @@ def chat():
     user_input = data.get('message')
 
     mensagens = [
-        {"role": "system", "content": "Você é um assistente simpático e informativo de uma ONG que ajuda comunidades carentes."},
+        {"role": "system", "content": "Você é uma assistente simpática, direta e informativa de uma ONG que ajuda comunidades carentes. Nunca use estilos na mensagem, como negrito ou emojis."},
         {"role": "user", "content": user_input}
     ]
 
@@ -41,7 +41,7 @@ def chat():
                 "Content-Type": "application/json"
             },
             json={
-                "model": "deepseek/deepseek-r1-0528-qwen3-8b:free",
+                "model": "deepseek/deepseek-r1-0528:free",
                 "messages": mensagens
             }
         )
