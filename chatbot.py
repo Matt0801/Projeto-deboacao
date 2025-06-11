@@ -1,33 +1,30 @@
 import os
-from flask import Flask, request, jsonify
-from flask import abort
-from openai import OpenAI
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 CORS(app, origins=["https://deboaacao.vercel.app"])
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-key = os.getenv("key") #colocado na var-ambiente no render
+api_key = os.getenv("API_KEY")
+acess_key = os.getenv("key")
 
 @app.route('/chat', methods=['POST'])
 def chat():
     origin = request.headers.get('Origin')
     origens_permitidas = [
-    "https://deboaacao.vercel.app",
-    "https://deboaacao.vercel.app/",  
-    None  # chamadas feitas do server-side
+        "https://deboaacao.vercel.app",
+        "https://deboaacao.vercel.app/",
+        None
     ]
 
     if origin not in origens_permitidas:
         abort(403)
-        
-    token = request.headers.get('Authorization')
-
-    if token != f"Bearer {key}":
-        return jsonify({'error': 'Unauthorized'}), 401
     
+    token = request.headers.get('Authorization')
+    if token != f"Bearer {acess_key}":
+        return jsonify({'error': 'Unauthorized'}), 401
+
     data = request.json
     user_input = data.get('message')
 
@@ -37,11 +34,19 @@ def chat():
     ]
 
     try:
-        resposta = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=mensagens
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "deepseek/deepseek-r1-0528-qwen3-8b:free",
+                "messages": mensagens
+            }
         )
-        reply = resposta.choices[0].message.content
+        response.raise_for_status()
+        reply = response.json()['choices'][0]['message']['content']
         return jsonify({'reply': reply})
     except Exception as e:
         return jsonify({'reply': f'Erro: {str(e)}'})
